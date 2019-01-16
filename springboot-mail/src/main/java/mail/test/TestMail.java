@@ -29,7 +29,7 @@ public class TestMail
 	public void test()throws Exception
 	{
 		String fromPos = "xianlong.lu@sprixin.com";
-		String toPos = "luxianlonga@163.com";
+		String toPos = "408030514@qq.com";
 		String subject = "今天的会议通知";
 		String text = "你好撒地方是个地方官 ";
 		//1.测试发送简单内容邮件
