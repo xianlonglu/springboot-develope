@@ -29,6 +29,7 @@
         <module>springboot-packagefilter</module>
         <module>springboot-interceptor</module>
 		-->
+		<module>springboot-test</module>
     </modules>
 
     <properties>

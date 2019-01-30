@@ -52,6 +52,8 @@ public class MailSendService {
 			helper.setTo(toPos);
 			helper.setSubject(subject);
 			helper.setText(text,true);
+			//helper.setText(text + "<img src='cid:pic' />",true);
+			//helper.addInline("pic", new File("d:/1.jpg"));
 			mailSender.send(msg);
 		} catch (Exception e) {
 			logger.error("发送附件邮件失败.", e);
