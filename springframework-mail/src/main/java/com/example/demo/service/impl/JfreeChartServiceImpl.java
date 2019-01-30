@@ -97,7 +97,7 @@ public class JfreeChartServiceImpl implements JfreeChartService{
             e.printStackTrace();
         }
         String imgStr = base64.encodeAsString(byteArray);
-        System.out.println(imgStr); 
+        //System.out.println(imgStr); 
         return  imgStr;
     
         /*FileOutputStream fos_jpg = null; 

@@ -5,6 +5,8 @@ import com.example.demo.service.JfreeChartService;
 import com.example.demo.service.MailService;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +40,15 @@ public class MailController {
         String imgStr = jfreeChartService.getImg();
         message.setImg("data:image/png;base64," + imgStr);
         
-        mailService.sendMessageMail(message, "测试消息通知", "message.ftl");
+        //mailService.sendMessageMail(message, "测试消息通知", "message.ftl");
+        mailService.sendMessageMail(message, "测试消息通知", "message.html");
+        
+        Map map = new HashMap(); 
+        map.put("messageCode", "MissingParameter1");
+        map.put("messageStatus", "Failed");
+        map.put("cause", "缺少参数,请确认");
+        map.put("img", "data:image/png;base64," + imgStr);
+        //mailService.sendMessageMail(map, "测试消息通知", "message.ftl");
+        //mailService.sendMessageMail(map, "测试消息通知", "message.html");
     }
 }
