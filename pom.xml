@@ -19,6 +19,7 @@
         <module>springboot-logger</module>
 		-->
         <module>springboot-mail</module>
+        <module>springframework-mail</module>
 		<!--
         <module>springboot-mockjunit</module>
         <module>springboot-mybatis</module>

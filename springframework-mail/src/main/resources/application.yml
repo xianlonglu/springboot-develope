@@ -1,0 +1,13 @@
+spring:
+#  邮件配置
+  mail:
+    port: 25
+    # 接收人邮箱
+    setTo: xianlong.lu@sprixin.com
+    # 发邮件邮箱
+    username: xianlong.lu@sprixin.com
+    # 发邮件邮箱密码
+    password: a7319769A
+    protocol: smtp
+    default-encoding: utf-8
+    host: smtp.qiye.163.com
