@@ -76,7 +76,7 @@ public class JfreeChartServiceImpl implements JfreeChartService{
         // 设置柱的透明度 
         plot.setForegroundAlpha(0.8f); 
                             
-        /*Base64 base64 = new Base64();
+        Base64 base64 = new Base64();
         
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         try {
@@ -98,9 +98,9 @@ public class JfreeChartServiceImpl implements JfreeChartService{
         }
         String imgStr = base64.encodeAsString(byteArray);
         System.out.println(imgStr); 
-        return  imgStr;*/
+        return  imgStr;
     
-        FileOutputStream fos_jpg = null; 
+        /*FileOutputStream fos_jpg = null; 
         try { 
             fos_jpg = new FileOutputStream("D:\\fruitt.jpg"); 
             ChartUtilities.writeChartAsJPEG(fos_jpg, 1, chart, 400, 300); 
@@ -109,7 +109,7 @@ public class JfreeChartServiceImpl implements JfreeChartService{
                 fos_jpg.close(); 
             } catch (Exception e) {} 
         } 
-        return "";
+        return "";*/
     }  
     
     public static void main(String[] args) {
