@@ -3,9 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.model.Message;
 import com.example.demo.service.JfreeChartService;
 import com.example.demo.service.MailService;
+import com.example.demo.service.impl.JfreeLineChart;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +44,27 @@ public class MailController {
         message.setImg("data:image/png;base64," + imgStr);
         
         //mailService.sendMessageMail(message, "测试消息通知", "message.ftl");
-        mailService.sendMessageMail(message, "测试消息通知", "message.html");
+        //mailService.sendMessageMail(message, "测试消息通知", "message.html");
         
-        Map map = new HashMap(); 
+        Map<String, Object> map = new HashMap<String, Object>(); 
         map.put("messageCode", "MissingParameter1");
         map.put("messageStatus", "Failed");
         map.put("cause", "缺少参数,请确认");
         map.put("img", "data:image/png;base64," + imgStr);
-        //mailService.sendMessageMail(map, "测试消息通知", "message.ftl");
+        
+        List<String> list1 = new ArrayList<String>();
+        list1.add("a");
+        list1.add("b");
+        list1.add("c");
+        map.put("list1", list1);
+        List<String> list2 = new ArrayList<String>();
+        list2.add("data:image/png;base64," + imgStr);
+        list2.add("data:image/png;base64," + JfreeLineChart.getImg());
+        map.put("list2", list2);
+        map.put("module1", "module1");
+        map.put("module2", "module2");
+        map.put("module3", "module3");
+        mailService.sendMessageMail(map, "测试消息通知", "message.ftl");
         //mailService.sendMessageMail(map, "测试消息通知", "message.html");
     }
 }
