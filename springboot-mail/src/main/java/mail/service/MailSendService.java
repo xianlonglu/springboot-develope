@@ -9,7 +9,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -27,7 +28,7 @@ public class MailSendService {
 	private JavaMailSender mailSender;
 
 	/** 日志打印. */
-	private Logger logger = Logger.getLogger(MailSendService.class);
+	private Logger logger = LoggerFactory.getLogger(MailSendService.class);
 
 	/**
 	 * 发送静态资源的文件,如：图片

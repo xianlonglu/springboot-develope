@@ -68,7 +68,7 @@ public class MailserviceImpl implements MailService {
                 Template template = configurer.getConfiguration().getTemplate(templateName);
                 try {
                     String text = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-
+System.out.println("text=" + text);
                     helper.setText(text, true);
                     mailSender.send(mimeMessage);
                  // 8. 将该邮件保存到本地
