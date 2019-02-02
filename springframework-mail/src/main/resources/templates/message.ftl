@@ -29,12 +29,12 @@
 </style>
 <body>
 <h2>图样例</h2>
-<image src="${(params.img)}"/>
+<img src="${(params.img)}"/>
 <p>
 3是否存在：${params.module3?if_exists};4是否存在：${params.module4?if_exists}
 <p>
 <#list params.list2 as x>
-<p><image src="${(x)}"/>
+<p><img src="${(x)}"/>
 </#list>
 <div>
     <h2>表样例</h2>
