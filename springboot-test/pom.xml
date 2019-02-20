@@ -10,6 +10,7 @@
 
 
 	<dependencies>
+		<!-- poi_word用到jar -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -19,6 +20,12 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.16</version>
+		</dependency>
+		<!-- uploadftp用到jar -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.3</version>
 		</dependency>
 	</dependencies>
 </project>

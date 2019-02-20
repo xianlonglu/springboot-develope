@@ -3,11 +3,15 @@ package com.example.demo.service.impl;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartUtilities;
@@ -243,7 +247,7 @@ public class JfreeLineChart {
 		// 横轴 lable 的位置 横轴上的 Lable 45度倾斜 DOWN_45
 		// domainAxis.setm
 
-		try {
+		/*try {
 			File file = new File("d:/lineChart.png");
 			ChartUtilities.saveChartAsPNG(file, mChart, 400, 300);// 把报表保存为文件
 		} catch (Exception e) {
@@ -254,9 +258,9 @@ public class JfreeLineChart {
 		ChartFrame mChartFrame = new ChartFrame("折线图", mChart);
 		mChartFrame.pack();
 		mChartFrame.setVisible(true);
-        return "";
+        return "";*/
 		
-		/*Base64 base64 = new Base64();
+		Base64 base64 = new Base64();
         
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         try {
@@ -278,7 +282,7 @@ public class JfreeLineChart {
         }
         String imgStr = base64.encodeAsString(byteArray);
         //System.out.println(imgStr); 
-        return  imgStr;*/
+        return  imgStr;
 	}
 
 	public static CategoryDataset GetDataset() {
