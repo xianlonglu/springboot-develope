@@ -8,7 +8,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- *  java 上传文件到ftp
+ * java 上传文件到ftp
+ * 
  * @author Administrator
  *
  */
@@ -50,7 +51,9 @@ public class FtpUtil {
 	public static void closeFtp() {
 		if (ftp != null && ftp.isConnected()) {
 			try {
+				// 退出
 				ftp.logout();
+				// 断开连接
 				ftp.disconnect();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -95,15 +98,34 @@ public class FtpUtil {
 	 * @param f
 	 * @throws Exception
 	 */
-	public static void upload(File f, String path) throws Exception {
-		String [] paths = path.split("/");
-		for (int i = 0; i < paths.length; i++) {
-			ftp.makeDirectory(paths[i]);
-			ftp.changeWorkingDirectory(paths[i]);
+	public static void upload(File f, String path) {
+		FileInputStream input = null;
+		try {
+			String[] paths = path.split("/");
+			for (int i = 0; i < paths.length; i++) {
+				// 创建上传的路径 该方法只能创建一级目录
+				ftp.makeDirectory(paths[i]);
+				// 指定上传路径
+				ftp.changeWorkingDirectory(paths[i]);
+			}
+			// 读取本地文件
+			input = new FileInputStream(f);
+			// 第一个参数是文件名
+			ftp.storeFile(f.getName(), input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// 关闭文件流
+				if (input != null) {
+					input.close();
+
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			closeFtp();
 		}
-		FileInputStream input = new FileInputStream(f);
-		ftp.storeFile(f.getName(), input);
-		input.close();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -113,17 +135,15 @@ public class FtpUtil {
 		f.setPwd("file");
 		connectFtp(f);
 		File file = new File("d:/git1/1.txt");
-		//upload(file);// 把文件上传在ftp上
+		// upload(file);// 把文件上传在ftp上
 		System.out.println("上传文件完成。。。。");
-		
-		upload(file,"/111/git222/git");// 把文件上传在ftp上
-		/*File f = new File("d:/git/1.txt");
-		if(f.isDirectory()){
-			System.out.println("路径");
-		}else{
-			System.out.println("文件");
-			System.out.println(f.getName());
-		}*/
-		
+
+		upload(file, "/111/git222/git");// 把文件上传在ftp上
+		/*
+		 * File f = new File("d:/git/1.txt"); if(f.isDirectory()){
+		 * System.out.println("路径"); }else{ System.out.println("文件");
+		 * System.out.println(f.getName()); }
+		 */
+
 	}
 }
