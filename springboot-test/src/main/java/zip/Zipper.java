@@ -76,7 +76,9 @@ public class Zipper {
         expand.setTaskType("unzip");
         expand.setTaskName("unzip");
         expand.setEncoding(encoding);
-
+        
+        // 覆盖，默认是 
+        //expand.setOverwrite(false);
         expand.setSrc(new File(zipFilepath));
         expand.setDest(new File(destDir));
         expand.execute();

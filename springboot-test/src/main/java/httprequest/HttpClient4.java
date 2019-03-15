@@ -40,10 +40,21 @@ public class HttpClient4 {
 		System.err.println("result=" + result);
 	}
 
+	/**
+	 * get Http调用
+	 * @param url 地址
+	 * @return
+	 */
 	public static String doGet(String url) {
 		return doGet(url, null);
 	}
-	
+
+	/**
+	 * get Http调用
+	 * @param url 地址
+	 * @param param 参数
+	 * @return
+	 */
 	public static String doGet(String url, Map<String, String> param) {
 		CloseableHttpClient httpClient = null;
 		CloseableHttpResponse response = null;
@@ -100,11 +111,22 @@ public class HttpClient4 {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * post Http调用
+	 * @param url 地址
+	 * @return
+	 */
 	public static String doPost(String url){
 		return doPost(url, null);
 	}
 	
+	/**
+	 * post json格式Http调用
+	 * @param url 地址
+	 * @param body json格式字符串参数
+	 * @return
+	 */
 	public static String doPost(String url, String body) {
 		// 创建httpClient实例
 		CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -174,6 +196,67 @@ public class HttpClient4 {
 			if (null != httpResponse) {
 				try {
 					httpResponse.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (null != httpClient) {
+				try {
+					httpClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * get form参数形式Http调用
+	 * @param url 地址
+	 * @param param form参数
+	 * @return
+	 */
+	public static String doPostForForm(String url, Map<String, String> param) {
+		CloseableHttpClient httpClient = null;
+		CloseableHttpResponse response = null;
+		String result = "";
+		try {
+			// 通过址默认配置创建一个httpClient实例
+			httpClient = HttpClients.createDefault();
+			URIBuilder builder= new URIBuilder();
+			if (param != null) {
+				for (String key : param.keySet()) {
+					builder.addParameter(key, param.get(key));
+				}
+			}
+			URI uri = builder.build();
+			// 创建httpPost远程连接实例
+			HttpPost httpPost = new HttpPost(uri);
+			// 设置配置请求参数
+			RequestConfig requestConfig = RequestConfig.custom()
+					.setConnectTimeout(35000)// 连接主机服务超时时间
+					.setConnectionRequestTimeout(35000)// 请求超时时间
+					.setSocketTimeout(60000)// 数据读取超时时间
+					.build();
+			// 为httpPost实例设置配置
+			httpPost.setConfig(requestConfig);
+			// 执行post请求得到返回对象
+			response = httpClient.execute(httpPost);
+			// 通过返回对象获取返回数据
+			if (response.getStatusLine().getStatusCode() == 200) {
+				HttpEntity entity = response.getEntity();
+				// 通过EntityUtils中的toString方法将结果转换为字符串
+				result = EntityUtils.toString(entity, "UTF-8");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			// 关闭资源
+			if (null != response) {
+				try {
+					response.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
