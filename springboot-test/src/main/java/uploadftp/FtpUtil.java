@@ -2,10 +2,14 @@ package uploadftp;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * java 上传文件到ftp
@@ -15,135 +19,229 @@ import java.io.IOException;
  */
 public class FtpUtil {
 
-	private static FTPClient ftp;
+	private static Logger logger = LoggerFactory.getLogger(FtpUtil.class);
+
+	private static final String errMsg = "创建FTPClient连接失败";
+
 
 	/**
-	 * 获取ftp连接
+	 * 创建FTPClient连接
 	 *
-	 * @param f
-	 * @return
+	 * @param ipAddr ip
+	 * @param userName 用户
+	 * @param pwd 密码
+	 * @return FTPClient
 	 * @throws Exception
 	 */
-	public static boolean connectFtp(Ftp f) throws Exception {
-		ftp = new FTPClient();
-		boolean flag = false;
-		int reply;
-		if (f.getPort() == null) {
-			ftp.connect(f.getIpAddr(), 21);
-		} else {
-			ftp.connect(f.getIpAddr(), f.getPort());
-		}
-		ftp.login(f.getUserName(), f.getPwd());
-		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
-		reply = ftp.getReplyCode();
-		if (!FTPReply.isPositiveCompletion(reply)) {
-			ftp.disconnect();
-			return flag;
-		}
-		ftp.changeWorkingDirectory(f.getPath());
-		flag = true;
-		return flag;
+	private static FTPClient getConnectFtp(String ipAddr, String userName,
+			String pwd) throws Exception {
+		return getConnectFtp(ipAddr, 21, userName, pwd);
 	}
 
 	/**
-	 * 关闭ftp连接
+	 * 创建FTPClient连接
+	 *
+	 * @param ipAddr ip
+	 * @param port 端口
+	 * @param userName 用户
+	 * @param pwd 密码
+	 * @return FTPClient
+	 * @throws Exception
 	 */
-	public static void closeFtp() {
-		if (ftp != null && ftp.isConnected()) {
+	private static FTPClient getConnectFtp(String ipAddr, Integer port,
+			String userName, String pwd) throws Exception {
+		FTPClient ftpClient = new FTPClient();
+		int reply;
+		ftpClient.connect(ipAddr, 21);
+		ftpClient.login(userName, pwd);
+		ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+		reply = ftpClient.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			ftpClient.disconnect();
+			logger.error("创建FTPClient连接。");
+			throw new RuntimeException(errMsg);
+		}
+		return ftpClient;
+	}
+
+	/**
+	 * 关闭FTPClient连接
+	 *
+	 * @param ftp
+	 *            FTPClient
+	 */
+	public static void closeFtpClient(FTPClient ftpClient) {
+		if (ftpClient != null && ftpClient.isConnected()) {
 			try {
 				// 退出
-				ftp.logout();
+				ftpClient.logout();
 				// 断开连接
-				ftp.disconnect();
+				ftpClient.disconnect();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * 关闭流
+	 *
+	 * @param input
+	 *            FileInputStream
+	 */
+	public static void closeInput(FileInputStream input) {
+		try {
+			// 关闭文件流
+			if (input != null) {
+				input.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 上传某文件文件到ftp
+	 * 
+	 * @param ftpClient
+	 *            ftp连接
+	 * @param filePath
+	 *            file路径
+	 */
+	private static void storeFile(FTPClient ftpClient, String filePath) {
+		File file2 = new File(filePath);
+		FileInputStream input = null;
+		try {
+			input = new FileInputStream(file2);
+			ftpClient.storeFile(file2.getName(), input);
+		} catch (IOException e) {
+			logger.error("上传某文件文件到ftp失败。", e);
+			e.printStackTrace();
+		} finally {
+			closeInput(input);
+		}
+	}
+
+	/**
+	 * 
+	 * @param ftpClient
+	 *            ftp连接
+	 * @param ftpPath
+	 *            ftp路径
+	 * @throws Exception
+	 */
+	private static void createFilePath(FTPClient ftpClient, String ftpPath)
+			throws Exception {
+		String[] paths = ftpPath.split("/");
+		for (int i = 0; i < paths.length; i++) {
+			// 创建上传的路径 该方法只能创建一级目录
+			ftpClient.makeDirectory(paths[i]);
+			// 指定上传路径
+			ftpClient.changeWorkingDirectory(paths[i]);
 		}
 	}
 
 	/**
 	 * ftp上传文件或是文件夹
 	 *
-	 * @param f
+	 * @param file
+	 *            File
 	 * @throws Exception
 	 */
-	public static void upload(File f) throws Exception {
-		if (f.isDirectory()) {
-			ftp.makeDirectory(f.getName());
-			ftp.changeWorkingDirectory(f.getName());
-			String[] files = f.list();
+	public static void uploadDirectory(FTPClient ftpClient, File file)
+			throws Exception {
+		if (file.isDirectory()) {
+			ftpClient.makeDirectory(file.getName());
+			ftpClient.changeWorkingDirectory(file.getName());
+			String[] files = file.list();
 			for (String fstr : files) {
-				File file1 = new File(f.getPath() + "/" + fstr);
+				File file1 = new File(file.getPath() + "/" + fstr);
 				if (file1.isDirectory()) {
-					upload(file1);
-					ftp.changeToParentDirectory();
+					uploadDirectory(ftpClient, file1);
+					ftpClient.changeToParentDirectory();
 				} else {
-					File file2 = new File(f.getPath() + "/" + fstr);
-					FileInputStream input = new FileInputStream(file2);
-					ftp.storeFile(file2.getName(), input);
-					input.close();
+					storeFile(ftpClient, file.getPath() + "/" + fstr);
 				}
 			}
 		} else {
-			File file2 = new File(f.getPath());
-			FileInputStream input = new FileInputStream(file2);
-			ftp.storeFile(file2.getName(), input);
-			input.close();
+			storeFile(ftpClient, file.getPath());
 		}
 	}
 
 	/**
 	 * ftp上传文件到指定目录
 	 *
-	 * @param f
+	 * @param ftp
+	 *            Ftp
+	 * @param filePathList
+	 *            上传文件的路径集合
+	 * @param ftpPath
+	 *            ftp上文件夹路径
 	 * @throws Exception
 	 */
-	public static void upload(File f, String path) {
+	public static void uploadFile(FTPClient ftpClient,
+			List<String> filePathList, String ftpPath) {
 		FileInputStream input = null;
 		try {
-			String[] paths = path.split("/");
-			for (int i = 0; i < paths.length; i++) {
-				// 创建上传的路径 该方法只能创建一级目录
-				ftp.makeDirectory(paths[i]);
-				// 指定上传路径
-				ftp.changeWorkingDirectory(paths[i]);
+			createFilePath(ftpClient, ftpPath);
+			for (String filePath : filePathList) {
+				File file = new File(filePath);
+				// 读取本地文件
+				input = new FileInputStream(file);
+				// 第一个参数是文件名
+				ftpClient.storeFile(file.getName(), input);
 			}
-			// 读取本地文件
-			input = new FileInputStream(f);
-			// 第一个参数是文件名
-			ftp.storeFile(f.getName(), input);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("上传ftp失败。", e);
+			throw new RuntimeException("上传ftp失败", e);
 		} finally {
 			try {
 				// 关闭文件流
 				if (input != null) {
 					input.close();
-
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			closeFtp();
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		Ftp f = new Ftp();
-		f.setIpAddr("10.10.10.2");
-		f.setUserName("file");
-		f.setPwd("file");
-		connectFtp(f);
-		File file = new File("d:/git1/1.txt");
-		// upload(file);// 把文件上传在ftp上
-		System.out.println("上传文件完成。。。。");
+		testFiles();
 
-		upload(file, "/111/git222/git");// 把文件上传在ftp上
-		/*
-		 * File f = new File("d:/git/1.txt"); if(f.isDirectory()){
-		 * System.out.println("路径"); }else{ System.out.println("文件");
-		 * System.out.println(f.getName()); }
-		 */
+		testFileDirectory();
+	}
 
+	private static void testFiles() {
+		List<String> filePathList = new ArrayList<String>();
+		filePathList.add("d:/1.jpg");
+		filePathList.add("d:/1.txt");
+		filePathList.add("d:/lgg.jpg");
+
+		String ftpPath = "/lxl/123/222";
+		FTPClient ftpClient = null;
+		try {
+			ftpClient = getConnectFtp("10.10.10.2", "file", "file");
+			uploadFile(ftpClient, filePathList, ftpPath);// 把文件上传在ftp上
+		} catch (Exception e) {
+			throw new RuntimeException("上传ftp失败", e);
+		} finally {
+			closeFtpClient(ftpClient);
+		}
+	}
+
+	private static void testFileDirectory() {
+		FTPClient ftpClient = null;
+		try {
+			ftpClient = getConnectFtp("10.10.10.2", "file", "file");
+			String ftpPath = "/lxl/123/222";
+			createFilePath(ftpClient, ftpPath);
+			File file = new File("E:/123/2/logs");
+			uploadDirectory(ftpClient, file);
+		} catch (Exception e) {
+			throw new RuntimeException("上传ftp失败", e);
+		} finally {
+			closeFtpClient(ftpClient);
+		}
 	}
 }
