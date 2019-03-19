@@ -10,10 +10,11 @@
 
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>springboot-mail</module>
-        <module>springframework-mail</module>
-		<module>springboot-test</module>
-		<module>spic2-job</module>
+		<module>jdbcTemplate-mybatisPlus</module><!-- jdbcTemplate/mybatisPlus连接数据库例子 -->
+		<module>spic2-job</module><!-- springboot 任务 -->
+        <module>springboot-mail</module><!-- springboot 发邮件 -->
+        <module>springframework-mail</module><!-- springboot 使用framework模板发邮件 -->
+		<module>springboot-test</module><!-- 测试以及一些例子工具类等 -->
 		<!--
         <module>springboot-config</module>
         <module>springboot-data-jpa</module>
