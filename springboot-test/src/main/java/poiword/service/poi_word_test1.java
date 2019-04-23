@@ -86,9 +86,12 @@ public class poi_word_test1 {
 			xdoc.setParagraph(p, i);
 			// 居中
 			if (i == 0) {
-				setParagraphAlignInfo(p, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+				//setParagraphAlignInfo(p, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+
+				p.setIndentationLeft(200);
 			} else if (i == 1) {
-				setParagraphAlignInfo(p, ParagraphAlignment.LEFT, TextAlignment.CENTER);
+				p.setIndentationFirstLine(20);
+				//setParagraphAlignInfo(p, ParagraphAlignment.LEFT, TextAlignment.CENTER);
 			} else if (i == 2) {
 				setParagraphAlignInfo(p, ParagraphAlignment.CENTER, TextAlignment.CENTER);
 			} else if (i == 3) {
