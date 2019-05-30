@@ -28,6 +28,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
@@ -147,6 +148,9 @@ public class poi_word_test1 {
 		cell = table.getRow(2).getCell(0);
 		setCellWidthAndVAlign(cell, "3163", STTblWidth.DXA, STVerticalJc.TOP);
 		p = getCellFirstParagraph(cell);
+		
+		//居中
+		setParagraphAlignInfo(p, ParagraphAlignment.CENTER, TextAlignment.CENTER);
 		pRun = getOrAddParagraphFirstRun(p, false, false);
 		setParagraphRunFontInfo(p, pRun, "2.负责部门：", "宋体", "Times New Roman",
 				"21", false, false, false, false, null, null, 0, 6, 0);
@@ -156,6 +160,10 @@ public class poi_word_test1 {
 		pRun = getOrAddParagraphFirstRun(p, false, false);
 		setParagraphRunFontInfo(p, pRun, "研发部", "宋体", "Times New Roman",
 				"21", false, false, false, false, null, null, 0, 6, 0);
+		
+		//合并单元格
+		table.getRow(2).getCell(0).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART); 
+		table.getRow(2).getCell(1).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE); 
 	}
 
 	/**
